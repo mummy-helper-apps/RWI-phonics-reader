@@ -12,11 +12,9 @@
     <meta name="apple-mobile-web-app-title" content="RWI Phonics">
     <meta name="theme-color" content="#0f2042">
 
-    <!-- App Touch Icon for iOS & Web Browsers -->
-    <link rel="apple-touch-icon" href="https://api.iconify.design/lucide:book-open-check.svg?color=%23fbbf24&width=180&height=180">
-    <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/lucide:book-open-check.svg?color=%23fbbf24&width=192&height=192">
-
-    <!-- Web App Manifest Link -->
+    <!-- App Touch Icon & Manifest Link -->
+    <link rel="apple-touch-icon" href="./icon.svg">
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
     <link rel="manifest" href="manifest.json">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -108,9 +106,7 @@
     <header class="bg-white border-b border-slate-200 px-4 py-3 shadow-sm sticky top-0 z-30">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="showScreen('setup-screen')">
-                <div class="w-10 h-10 rounded-xl bg-navy-900 text-amber-300 flex items-center justify-center font-heading text-xl font-bold shadow-sm">
-                    RWI
-                </div>
+                <img src="./icon.svg" alt="App Icon" class="w-10 h-10 rounded-xl shadow-sm object-cover">
                 <div>
                     <h1 class="font-heading font-bold text-lg leading-tight text-navy-900">Phonics Fluency Reader</h1>
                     <p class="text-xs text-slate-500 font-medium">Year 1 • Read Write Inc. Stage Helper</p>
@@ -118,7 +114,6 @@
             </div>
 
             <div class="flex items-center space-x-2">
-                <!-- Native PWA Direct Install Button (Appears on supported Android/Chrome) -->
                 <button id="pwa-install-btn" onclick="triggerPwaInstall()" class="hidden px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-500 text-navy-950 text-xs font-bold flex items-center space-x-1.5 transition shadow-sm animate-pulse">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     <span>Install App</span>
@@ -148,7 +143,7 @@
                     <p class="text-sm text-slate-600 mt-1">Tailor the words to match your child's current Read Write Inc stage and practice goal.</p>
                 </div>
 
-                <!-- 1. Stage Selection (Multi-select enabled) -->
+                <!-- 1. Stage Selection -->
                 <div class="space-y-2">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <label class="block text-sm font-bold text-navy-900">1. Select RWI Stage(s) / Sets:</label>
@@ -160,7 +155,6 @@
                     </div>
                     <p class="text-xs text-slate-500">Tap sets to toggle multi-selection, or tap <span class="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono text-[10px]">1.1 ➔ X</span> to select all sets up to that level.</p>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2.5" id="stage-selector">
-                        <!-- Stage buttons injected dynamically JS -->
                     </div>
                 </div>
 
@@ -425,7 +419,7 @@
             }
         }
 
-        // PWA Lightweight Service Worker Handler
+        // Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
