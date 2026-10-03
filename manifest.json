@@ -9,16 +9,16 @@
 "orientation": "portrait",
 "icons": [
 {
-"src": "https://api.iconify.design/lucide:book-open-check.svg?color=%23fbbf24&width=192&height=192",
-"sizes": "192x192",
+"src": "./icon.svg",
+"sizes": "192x192 512x512",
 "type": "image/svg+xml",
 "purpose": "any"
 },
 {
-"src": "https://api.iconify.design/lucide:book-open-check.svg?color=%23fbbf24&width=512&height=512",
+"src": "./icon.svg",
 "sizes": "512x512",
 "type": "image/svg+xml",
-"purpose": "any maskable"
+"purpose": "maskable"
 }
 ]
 }
