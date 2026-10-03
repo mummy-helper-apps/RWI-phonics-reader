@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<!-- Background -->
+<rect width="512" height="512" rx="100" fill="#0f2042"/>
+​<!-- Book Outer Shadow / Base -->
+<path d="M 64 380 Q 256 420 448 380 L 448 160 Q 256 200 64 160 Z" fill="#0a152d" />
+​<!-- Book Back Cover -->
+<path d="M 60 375 Q 256 415 452 375 L 452 150 Q 256 190 60 150 Z" fill="#1e3a8a" />
+​<!-- Left Page -->
+<path d="M 72 155 Q 252 190 252 375 Q 160 365 72 360 Z" fill="#fffef0" />
+<path d="M 76 158 Q 250 193 250 370 Q 165 361 76 356 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+​<!-- Right Page -->
+<path d="M 440 155 Q 260 190 260 375 Q 352 365 440 360 Z" fill="#fffef0" />
+<path d="M 436 158 Q 262 193 262 370 Q 347 361 436 356 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+​<!-- Book Spine / Fold -->
+<path d="M 250 190 Q 256 193 262 190 L 262 375 Q 256 378 250 375 Z" fill="#cbd5e1" />
+​<!-- Left Page: Golden Lightning Bolt -->
+<g transform="translate(100, 190) scale(1.1)">
+<path d="M 45 10 L 15 65 L 40 65 L 25 115 L 75 50 L 48 50 Z" fill="#fbbf24" stroke="#d97706" stroke-width="3" stroke-linejoin="round" />
+</g>
+​<!-- Right Page: Talking Head Silhouette + Sound Waves -->
+<g transform="translate(285, 205)">
+<!-- Head Profile -->
+<path d="M 35 15 C 22 15 12 25 12 38 C 12 48 18 56 26 60 L 26 68 C 22 70 15 72 5 78 C 2 80 0 83 0 88 L 0 95 L 50 95 L 50 88 C 50 82 45 76 38 72 L 35 70 C 40 66 45 58 45 50 C 45 48 40 46 36 46 L 36 38 C 36 25 35 15 35 15 Z" fill="#0f2042" />
+<!-- Open Mouth detail -->
+<path d="M 32 42 L 42 45 L 32 48 Z" fill="#ffffff" />
+<!-- Sound Waves -->
+<path d="M 54 32 A 18 18 0 0 1 54 58" fill="none" stroke="#2563eb" stroke-width="5" stroke-linecap="round" />
+<path d="M 65 24 A 30 30 0 0 1 65 66" fill="none" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" />
+<path d="M 76 16 A 42 42 0 0 1 76 74" fill="none" stroke="#60a5fa" stroke-width="5" stroke-linecap="round" />
+</g>
+</svg>
