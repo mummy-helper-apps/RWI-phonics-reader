@@ -12,8 +12,9 @@
     <meta name="apple-mobile-web-app-title" content="RWI Phonics">
     <meta name="theme-color" content="#0f2042">
 
-    <!-- App Touch Icon for iOS / Mobile (Custom Book + Lightning + Speaking Icon) -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='512' height='512'><rect width='512' height='512' rx='108' fill='%230f2042'/><path d='M70 380 C160 360 225 375 256 390 C287 375 352 360 442 380 L442 160 C352 140 287 155 256 170 C225 155 160 140 70 160 Z' fill='%23081022'/><path d='M78 152 C155 136 218 148 248 164 L248 370 C218 354 155 342 78 358 Z' fill='%23fffefb'/><path d='M434 152 C357 136 294 148 264 164 L264 370 C294 354 357 342 434 358 Z' fill='%23fff9ef'/><path d='M248 164 C253 162 259 162 264 164 L264 370 C259 368 253 368 248 370 Z' fill='%23e2e8f0'/><path d='M160 185 L120 260 L152 260 L130 330 L192 240 L160 240 Z' fill='%23fbbf24' stroke='%23d97706' stroke-width='4' stroke-linejoin='round'/><path d='M330 220 C342 220 352 230 352 242 C352 250 347 257 340 261 C348 266 355 274 358 288 L302 288 C305 274 312 266 320 261 C313 257 308 250 308 242 C308 230 318 220 330 220 Z' fill='%230f2042'/><path d='M372 238 C380 248 380 258 372 268' fill='none' stroke='%230284c7' stroke-width='7' stroke-linecap='round'/><path d='M390 226 C404 243 404 263 390 280' fill='none' stroke='%230284c7' stroke-width='7' stroke-linecap='round'/></svg>">
+    <!-- App Touch Icon for iOS & Web Browsers -->
+    <link rel="apple-touch-icon" href="https://api.iconify.design/lucide:book-open-check.svg?color=%23fbbf24&width=180&height=180">
+    <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/lucide:book-open-check.svg?color=%23fbbf24&width=192&height=192">
 
     <!-- Web App Manifest Link -->
     <link rel="manifest" href="manifest.json">
@@ -117,6 +118,12 @@
             </div>
 
             <div class="flex items-center space-x-2">
+                <!-- Native PWA Direct Install Button (Appears on supported Android/Chrome) -->
+                <button id="pwa-install-btn" onclick="triggerPwaInstall()" class="hidden px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-500 text-navy-950 text-xs font-bold flex items-center space-x-1.5 transition shadow-sm animate-pulse">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span>Install App</span>
+                </button>
+
                 <button onclick="showScreen('analytics-screen')" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 flex items-center space-x-1.5 transition">
                     <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     <span class="hidden sm:inline">Parent Stats</span>
@@ -397,16 +404,35 @@
     </footer>
 
     <script>
-        // PWA Service Worker Registration
+        // Native PWA Installation Event Listener
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('pwa-install-btn');
+            if (installBtn) installBtn.classList.remove('hidden');
+        });
+
+        function triggerPwaInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('pwa-install-btn').classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        // PWA Lightweight Service Worker Handler
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
                     self.addEventListener('install', (e) => self.skipWaiting());
                     self.addEventListener('activate', (e) => self.clients.claim());
                     self.addEventListener('fetch', (e) => {
-                        e.respondWith(
-                            fetch(e.request).catch(() => caches.match(e.request))
-                        );
+                        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
                     });
                 `;
                 const blob = new Blob([swCode], { type: 'application/javascript' });
