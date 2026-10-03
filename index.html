@@ -141,10 +141,18 @@
                     <p class="text-sm text-slate-600 mt-1">Tailor the words to match your child's current Read Write Inc stage and practice goal.</p>
                 </div>
 
-                <!-- 1. Stage Selection -->
+                <!-- 1. Stage Selection (Multi-select enabled) -->
                 <div class="space-y-2">
-                    <label class="block text-sm font-bold text-navy-900">1. Select RWI Stage / Set:</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="stage-selector">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <label class="block text-sm font-bold text-navy-900">1. Select RWI Stage(s) / Sets:</label>
+                        <div class="flex items-center space-x-2 text-xs">
+                            <button type="button" onclick="selectAllStages()" class="text-navy-900 font-semibold hover:underline">Select All</button>
+                            <span class="text-slate-300">•</span>
+                            <button type="button" onclick="resetToSingleStage('1.1')" class="text-slate-500 font-semibold hover:underline">Reset to 1.1</button>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500">Tap sets to toggle multi-selection, or tap <span class="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono text-[10px]">1.1 ➔ X</span> to select all sets up to that level.</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2.5" id="stage-selector">
                         <!-- Stage buttons injected dynamically JS -->
                     </div>
                 </div>
@@ -570,7 +578,7 @@
             } catch (e) {}
         }
 
-        let currentConfig = { stage: "1.1", wordType: "A", count: 10, adaptive: true };
+        let currentConfig = { stages: ["1.1"], wordType: "A", count: 10, adaptive: true };
         let sessionWords = [];
         let currentIndex = 0;
         let wordStartTime = 0;
@@ -607,21 +615,56 @@
             const container = document.getElementById('stage-selector');
             container.innerHTML = '';
             RWI_STAGES.forEach(stg => {
-                const btn = document.createElement('button');
+                const isSelected = currentConfig.stages.includes(stg.id);
+                const btn = document.createElement('div');
                 btn.type = 'button';
-                btn.onclick = () => selectStage(stg.id);
+                btn.onclick = () => toggleStage(stg.id);
                 btn.setAttribute('data-stage', stg.id);
-                btn.className = `stage-btn p-3 rounded-xl border-2 text-left font-bold text-xs sm:text-sm transition ${currentConfig.stage === stg.id ? 'border-navy-900 bg-navy-900 text-white shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'}`;
-                btn.innerHTML = `<div>Set ${stg.id}</div><div class="text-[10px] font-normal opacity-80">${stg.name.split('(')[1] ? stg.name.split('(')[1].replace(')', '') : ''}</div>`;
+                btn.className = `stage-btn p-3 rounded-xl border-2 text-left cursor-pointer transition flex flex-col justify-between ${isSelected ? 'border-navy-900 bg-navy-900 text-white shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'}`;
+                
+                const topRow = `
+                    <div class="flex items-center justify-between font-bold text-xs sm:text-sm">
+                        <span>${isSelected ? '✓ ' : ''}Set ${stg.id}</span>
+                        <button type="button" onclick="event.stopPropagation(); selectUpToStage('${stg.id}')" title="Select Set 1.1 up to Set ${stg.id}" class="text-[10px] px-1.5 py-0.5 rounded ${isSelected ? 'bg-navy-800 text-amber-300 hover:bg-navy-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'} font-semibold">
+                            1.1 ➔ ${stg.id}
+                        </button>
+                    </div>
+                `;
+                const subText = `<div class="text-[10px] font-normal opacity-80 mt-1">${stg.name.split('(')[1] ? stg.name.split('(')[1].replace(')', '') : ''}</div>`;
+                
+                btn.innerHTML = topRow + subText;
                 container.appendChild(btn);
             });
         }
 
-        function selectStage(stageId) {
-            currentConfig.stage = stageId;
-            document.querySelectorAll('.stage-btn').forEach(btn => {
-                btn.className = btn.getAttribute('data-stage') === stageId ? 'stage-btn p-3 rounded-xl border-2 text-left font-bold text-xs sm:text-sm transition border-navy-900 bg-navy-900 text-white shadow-sm' : 'stage-btn p-3 rounded-xl border-2 text-left font-bold text-xs sm:text-sm transition border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300';
-            });
+        function toggleStage(stageId) {
+            const idx = currentConfig.stages.indexOf(stageId);
+            if (idx > -1) {
+                if (currentConfig.stages.length > 1) {
+                    currentConfig.stages.splice(idx, 1);
+                }
+            } else {
+                currentConfig.stages.push(stageId);
+            }
+            renderStageButtons();
+        }
+
+        function selectAllStages() {
+            currentConfig.stages = RWI_STAGES.map(s => s.id);
+            renderStageButtons();
+        }
+
+        function selectUpToStage(stageId) {
+            const targetIdx = RWI_STAGES.findIndex(s => s.id === stageId);
+            if (targetIdx > -1) {
+                currentConfig.stages = RWI_STAGES.slice(0, targetIdx + 1).map(s => s.id);
+            }
+            renderStageButtons();
+        }
+
+        function resetToSingleStage(stageId) {
+            currentConfig.stages = [stageId];
+            renderStageButtons();
         }
 
         function selectWordType(typeCode) {
@@ -651,18 +694,18 @@
         }
 
         function filterWordsForSession() {
-            const stage = currentConfig.stage;
+            const selectedStages = currentConfig.stages || ["1.1"];
             const typeMode = currentConfig.wordType;
 
-            let pool = MASTER_WORDS.filter(w => w.stage === stage);
-            if (pool.length < 5) pool = MASTER_WORDS.filter(w => parseFloat(w.stage) <= parseFloat(stage));
+            let pool = MASTER_WORDS.filter(w => selectedStages.includes(w.stage));
+            if (pool.length === 0) pool = MASTER_WORDS.filter(w => w.stage === "1.1");
 
             if (typeMode === 'A') pool = pool.filter(w => w.type === 'green');
             else if (typeMode === 'B') pool = pool.filter(w => w.type === 'red');
             else if (typeMode === 'C') pool = pool.filter(w => w.type === 'alien');
             else if (typeMode === 'D') pool = pool.filter(w => w.type === 'green' || w.type === 'red');
 
-            if (pool.length === 0) pool = MASTER_WORDS.filter(w => w.stage === stage);
+            if (pool.length === 0) pool = MASTER_WORDS.filter(w => selectedStages.includes(w.stage));
 
             currentConfig.adaptive = document.getElementById('adaptive-toggle').checked;
             let chosen = [];
