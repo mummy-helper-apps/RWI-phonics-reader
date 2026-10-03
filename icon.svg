@@ -1,31 +1,99 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-<!-- Background -->
-<rect width="512" height="512" rx="100" fill="#0f2042"/>
-​<!-- Book Outer Shadow / Base -->
-<path d="M 64 380 Q 256 420 448 380 L 448 160 Q 256 200 64 160 Z" fill="#0a152d" />
-​<!-- Book Back Cover -->
-<path d="M 60 375 Q 256 415 452 375 L 452 150 Q 256 190 60 150 Z" fill="#1e3a8a" />
-​<!-- Left Page -->
-<path d="M 72 155 Q 252 190 252 375 Q 160 365 72 360 Z" fill="#fffef0" />
-<path d="M 76 158 Q 250 193 250 370 Q 165 361 76 356 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
-​<!-- Right Page -->
-<path d="M 440 155 Q 260 190 260 375 Q 352 365 440 360 Z" fill="#fffef0" />
-<path d="M 436 158 Q 262 193 262 370 Q 347 361 436 356 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
-​<!-- Book Spine / Fold -->
-<path d="M 250 190 Q 256 193 262 190 L 262 375 Q 256 378 250 375 Z" fill="#cbd5e1" />
-​<!-- Left Page: Golden Lightning Bolt -->
-<g transform="translate(100, 190) scale(1.1)">
-<path d="M 45 10 L 15 65 L 40 65 L 25 115 L 75 50 L 48 50 Z" fill="#fbbf24" stroke="#d97706" stroke-width="3" stroke-linejoin="round" />
-</g>
-​<!-- Right Page: Talking Head Silhouette + Sound Waves -->
-<g transform="translate(285, 205)">
-<!-- Head Profile -->
-<path d="M 35 15 C 22 15 12 25 12 38 C 12 48 18 56 26 60 L 26 68 C 22 70 15 72 5 78 C 2 80 0 83 0 88 L 0 95 L 50 95 L 50 88 C 50 82 45 76 38 72 L 35 70 C 40 66 45 58 45 50 C 45 48 40 46 36 46 L 36 38 C 36 25 35 15 35 15 Z" fill="#0f2042" />
-<!-- Open Mouth detail -->
-<path d="M 32 42 L 42 45 L 32 48 Z" fill="#ffffff" />
-<!-- Sound Waves -->
-<path d="M 54 32 A 18 18 0 0 1 54 58" fill="none" stroke="#2563eb" stroke-width="5" stroke-linecap="round" />
-<path d="M 65 24 A 30 30 0 0 1 65 66" fill="none" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" />
-<path d="M 76 16 A 42 42 0 0 1 76 74" fill="none" stroke="#60a5fa" stroke-width="5" stroke-linecap="round" />
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Soft Drop Shadow for Depth -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#0F172A" flood-opacity="0.25"/>
+    </filter>
+
+    <filter id="elementShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.15"/>
+    </filter>
+
+    <!-- Book Cover Outer Gradient -->
+    <linearGradient id="coverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <!-- Page Gradients for 3D Curve Effect -->
+    <linearGradient id="leftPageGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F8FAFC"/>
+      <stop offset="85%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#CBD5E1"/>
+    </linearGradient>
+
+    <linearGradient id="rightPageGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#CBD5E1"/>
+      <stop offset="15%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+
+    <!-- Lightning Bolt Gradient -->
+    <linearGradient id="lightningGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main Container -->
+  <g filter="url(#dropShadow)">
+    <!-- Outer Book Cover Spine & Edges -->
+    <path d="M 36 376 C 104 358, 190 358, 256 376 C 322 358, 408 358, 476 376 L 476 394 C 408 376, 322 376, 256 394 C 190 376, 104 376, 36 394 Z" fill="url(#coverGrad)"/>
+    
+    <!-- Stacked Pages Thickness Edge -->
+    <path d="M 40 370 C 104 353, 190 353, 256 370 C 322 353, 408 353, 472 370 L 476 376 C 408 358, 322 358, 256 376 C 190 358, 104 358, 36 376 Z" fill="#94A3B8"/>
+
+    <!-- Left Page Base -->
+    <path d="M 256 128 C 188 110, 100 110, 38 128 L 38 370 C 100 352, 188 352, 256 370 Z" fill="url(#leftPageGrad)"/>
+
+    <!-- Right Page Base -->
+    <path d="M 256 128 C 324 110, 412 110, 474 128 L 474 370 C 412 352, 324 352, 256 370 Z" fill="url(#rightPageGrad)"/>
+
+    <!-- Center Fold Shadow -->
+    <path d="M 244 126 C 252 129, 256 131, 256 131 C 256 131, 260 129, 268 126 L 268 368 C 260 366, 256 368, 256 368 C 256 368, 252 366, 244 368 Z" fill="#0F172A" opacity="0.15"/>
+    <line x1="256" y1="128" x2="256" y2="370" stroke="#64748B" stroke-width="2" opacity="0.4"/>
+
+    <!-- Bookmark Ribbon -->
+    <path d="M 250 369 L 250 432 L 256 424 L 262 432 L 262 369 Z" fill="#EF4444"/>
+  </g>
+
+  <!-- Left Page Content: Lightning Bolt -->
+  <g filter="url(#elementShadow)">
+    <path d="M 158 165 
+             L 112 252 
+             H 150 
+             L 126 335 
+             L 196 232 
+             H 156 
+             Z" 
+          fill="url(#lightningGrad)" 
+          stroke="#B45309" 
+          stroke-width="2" 
+          stroke-linejoin="round"/>
+  </g>
+
+  <!-- Right Page Content: Squiggly Cursive Writing Lines -->
+  <g stroke="#1E293B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.82">
+    <!-- Line 1 -->
+    <path d="M 288 168 C 294 158, 298 158, 302 168 C 308 174, 314 174, 320 166 C 326 156, 332 156, 336 168 C 342 174, 350 170, 356 164 C 364 156, 370 160, 376 168 C 384 176, 392 164, 400 168 C 408 172, 414 164, 420 168 C 428 174, 436 160, 442 168"/>
+
+    <!-- Line 2 -->
+    <path d="M 288 194 C 296 184, 302 198, 310 190 C 316 184, 322 184, 328 194 C 334 200, 342 186, 348 192 C 354 198, 362 190, 370 194 C 378 198, 386 186, 394 192 C 400 196, 408 190, 416 194 C 424 198, 432 188, 438 192"/>
+
+    <!-- Line 3 -->
+    <path d="M 288 220 C 294 210, 300 224, 306 218 C 314 210, 320 224, 326 218 C 334 210, 340 214, 348 220 C 356 226, 362 214, 370 218 C 378 222, 384 214, 392 220 C 400 224, 406 214, 414 218 C 422 222, 430 214, 436 218 C 442 222, 448 214, 452 220"/>
+
+    <!-- Line 4 -->
+    <path d="M 288 246 C 296 238, 302 250, 308 244 C 316 236, 322 252, 330 244 C 336 238, 344 248, 352 242 C 360 236, 366 250, 374 244 C 382 238, 390 250, 398 244 C 404 238, 412 248, 420 242 C 428 236, 434 246, 440 242"/>
+
+    <!-- Line 5 -->
+    <path d="M 288 272 C 294 262, 300 276, 306 270 C 314 262, 320 278, 328 270 C 334 264, 342 274, 350 268 C 358 262, 364 276, 372 270 C 380 264, 388 276, 396 270 C 402 264, 410 274, 418 268 C 426 262, 432 272, 438 268 C 444 264, 450 272, 454 268"/>
+
+    <!-- Line 6 -->
+    <path d="M 288 298 C 296 290, 302 302, 310 296 C 316 290, 324 300, 332 294 C 340 288, 346 302, 354 296 C 362 290, 370 302, 378 296 C 384 290, 392 300, 400 294 C 408 288, 414 300, 422 294 C 430 288, 436 298, 442 294"/>
+
+    <!-- Line 7 -->
+    <path d="M 288 324 C 294 316, 300 328, 306 322 C 314 314, 320 328, 328 322 C 336 316, 342 328, 350 322 C 358 316, 364 326, 372 320 C 380 314, 388 326, 396 320 C 404 314, 410 324, 418 320 C 424 316, 430 324, 436 320"/>
+  </g>
 </svg>
