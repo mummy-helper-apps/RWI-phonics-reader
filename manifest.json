@@ -9,7 +9,13 @@
 "orientation": "portrait",
 "icons": [
 {
-"src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230f2042'/><text x='256' y='330' font-size='220' font-weight='bold' text-anchor='middle' fill='%23fcd34d' font-family='sans-serif'>RWI</text></svg>",
+"src": "https://api.iconify.design/lucide:book-open.svg?color=%23fcd34d&width=192&height=192",
+"sizes": "192x192",
+"type": "image/svg+xml",
+"purpose": "any"
+},
+{
+"src": "https://api.iconify.design/lucide:book-open.svg?color=%23fcd34d&width=512&height=512",
 "sizes": "512x512",
 "type": "image/svg+xml",
 "purpose": "any maskable"
