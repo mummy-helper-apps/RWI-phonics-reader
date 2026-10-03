@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RWI Phonics Fluency Reader - Year 1</title>
+
+    <!-- Mobile Standalone & PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="RWI Phonics">
+    <meta name="theme-color" content="#0f2042">
+
+    <!-- Inline Web App Manifest for Standalone Launcher Mode -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"RWI Phonics Reader","short_name":"RWI Phonics","start_url":"./","display":"standalone","background_color":"#f8fafc","theme_color":"#0f2042","description":"Read Write Inc. Phonics Fluency Reader for Year 1"}'>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Fredoka:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f2042',
+                            950: '#081226',
+                        },
+                        pastel: {
+                            green: '#e6f4ea',
+                            greenBorder: '#a7f3d0',
+                            red: '#fce8e6',
+                            redBorder: '#fecdd3',
+                            blue: '#e8f0fe',
+                            blueBorder: '#bfdbfe',
+                        }
+                    },
+                    fontFamily: {
+                        sassoon: ['Lexend', 'Comic Neue', 'Fredoka', 'sans-serif'],
+                        heading: ['Fredoka', 'Lexend', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', 'Comic Neue', sans-serif;
+            background-color: #f8fafc;
+            color: #0f2042;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Sassoon Infant typography feel for early readers */
+        .rwi-word-display {
+            font-family: 'Lexend', 'Comic Neue', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: #0f2042;
+        }
+
+        /* Card background variants */
+        .bg-card-green {
+            background-color: #e6f4ea;
+            border-color: #a7f3d0;
+            color: #064e3b;
+        }
+        .bg-card-red {
+            background-color: #fce8e6;
+            border-color: #fecdd3;
+            color: #881337;
+        }
+        .bg-card-blue {
+            background-color: #e8f0fe;
+            border-color: #bfdbfe;
+            color: #1e3a8a;
+        }
+
+        /* Soft button pulse */
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .animate-subtle {
+            animation: pulse-subtle 3s infinite ease-in-out;
+        }
+
+        /* Sound Dot Styling */
+        .sound-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #0f2042;
+            display: inline-block;
+            margin: 0 4px;
+        }
+        .sound-bar {
+            width: 24px;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #0f2042;
+            display: inline-block;
+            margin: 0 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-navy-900 flex flex-col justify-between">
+
+    <header class="bg-white border-b border-slate-200 px-4 py-3 shadow-sm sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showScreen('setup-screen')">
+                <div class="w-10 h-10 rounded-xl bg-navy-900 text-amber-300 flex items-center justify-center font-heading text-xl font-bold shadow-sm">
+                    RWI
+                </div>
+                <div>
+                    <h1 class="font-heading font-bold text-lg leading-tight text-navy-900">Phonics Fluency Reader</h1>
+                    <p class="text-xs text-slate-500 font-medium">Year 1 • Read Write Inc. Stage Helper</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="showScreen('analytics-screen')" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 flex items-center space-x-1.5 transition">
+                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span class="hidden sm:inline">Parent Stats</span>
+                </button>
+                <button onclick="showScreen('setup-screen')" class="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold flex items-center space-x-1.5 transition shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <span>New Session</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-4xl w-full mx-auto p-4 sm:p-6 flex-grow flex flex-col justify-center">
+
+        <!-- SCREEN 1: SETUP SCREEN -->
+        <section id="setup-screen" class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div>
+                    <span class="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Parent Setup</span>
+                    <h2 class="text-2xl font-heading font-bold text-navy-900 mt-2">Configure Practice Session</h2>
+                    <p class="text-sm text-slate-600 mt-1">Tailor the words to match your child's current Read Write Inc stage and practice goal.</p>
+                </div>
+
+                <!-- 1. Stage Selection -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-navy-900">1. Select RWI Stage / Set:</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="stage-selector">
+                        <!-- Stage buttons injected dynamically JS -->
+                    </div>
+                </div>
+
+                <!-- 2. Word Types Filter -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-navy-900">2. Select Word Type:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5" id="word-type-selector">
+                        <button onclick="selectWordType('A')" data-type="A" class="word-type-btn p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50 text-left hover:border-emerald-500 transition">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span class="font-bold text-sm text-emerald-950">Option A: Green Words</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">Real decodable phonics words</p>
+                        </button>
+                        <button onclick="selectWordType('B')" data-type="B" class="word-type-btn p-3 rounded-xl border-2 border-rose-200 bg-rose-50 text-left hover:border-rose-400 transition">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                <span class="font-bold text-sm text-rose-950">Option B: Red Words</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">Tricky / non-decodable sight words</p>
+                        </button>
+                        <button onclick="selectWordType('C')" data-type="C" class="word-type-btn p-3 rounded-xl border-2 border-blue-200 bg-blue-50 text-left hover:border-blue-400 transition">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                                <span class="font-bold text-sm text-blue-950">Option C: Alien Words 🛸</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">Nonsense words to test decoding</p>
+                        </button>
+                        <button onclick="selectWordType('D')" data-type="D" class="word-type-btn p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-left hover:border-navy-900 transition">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-slate-700"></span>
+                                <span class="font-bold text-sm text-navy-950">Option D: Mix (Green & Red)</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">Balanced real decodables & tricky words</p>
+                        </button>
+                        <button onclick="selectWordType('E')" data-type="E" class="word-type-btn p-3 rounded-xl border-2 border-indigo-200 bg-indigo-50 text-left hover:border-indigo-400 transition sm:col-span-2 lg:col-span-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
+                                <span class="font-bold text-sm text-indigo-950">Option E: Full Mix (Green, Red & Alien)</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">Comprehensive fluency challenge across all types</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Words Count -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-bold text-navy-900">3. Words in this session:</label>
+                        <span id="word-count-display" class="font-bold text-lg text-navy-900 bg-slate-100 px-3 py-0.5 rounded-lg border border-slate-200">10 words</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="setWordCount(5)" class="count-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 hover:bg-slate-100">5</button>
+                        <button onclick="setWordCount(10)" class="count-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 hover:bg-slate-100 bg-navy-900 text-white">10</button>
+                        <button onclick="setWordCount(15)" class="count-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 hover:bg-slate-100">15</button>
+                        <button onclick="setWordCount(20)" class="count-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 hover:bg-slate-100">20</button>
+                        <button onclick="setWordCount(25)" class="count-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 hover:bg-slate-100">25</button>
+                    </div>
+                </div>
+
+                <!-- Adaptive Frequency Option Toggle -->
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-start space-x-3">
+                    <input type="checkbox" id="adaptive-toggle" checked class="mt-1 w-4 h-4 text-navy-900 rounded border-slate-300 focus:ring-navy-800">
+                    <div>
+                        <label for="adaptive-toggle" class="text-sm font-bold text-navy-900 cursor-pointer">Enable Smart Repetition Engine</label>
+                        <p class="text-xs text-slate-500 mt-0.5">Words answered incorrectly or taking longer to decode will appear more frequently in subsequent practice sessions.</p>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button onclick="startSession()" class="w-full py-4 bg-navy-900 hover:bg-navy-800 text-white font-heading font-bold text-lg rounded-xl shadow-md transition transform active:scale-98 flex items-center justify-center space-x-2">
+                    <span>Start Practice Session</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: ACTIVE PRACTICE SESSION -->
+        <section id="practice-screen" class="hidden space-y-6">
+            <!-- Progress Bar & Session Info -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between space-x-4">
+                <div class="flex-1">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-500 mb-1">
+                        <span id="session-progress-text">Word 1 of 10</span>
+                        <span id="live-timer-text" class="font-mono text-navy-900">0.0s</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="session-progress-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 10%"></div>
+                    </div>
+                </div>
+                <button onclick="quitSession()" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-2 py-1 rounded hover:bg-slate-100">End Early</button>
+            </div>
+
+            <!-- MAIN FLASHCARD DISPLAY -->
+            <div id="word-card" class="bg-card-green border-4 rounded-3xl p-8 sm:p-14 text-center transition-all duration-300 relative shadow-md min-h-[280px] sm:min-h-[340px] flex flex-col justify-between items-center">
+                
+                <!-- Badge top row -->
+                <div class="w-full flex justify-between items-center">
+                    <span id="card-type-badge" class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-white/80 shadow-sm border border-black/5">
+                        Green Word
+                    </span>
+                    <button onclick="speakCurrentWord()" title="Listen to pronunciation" class="p-2 rounded-full bg-white/80 hover:bg-white text-navy-900 shadow-sm border border-black/5 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Word Text Display -->
+                <div class="my-auto py-6">
+                    <div id="current-word-text" class="rwi-word-display text-6xl sm:text-8xl tracking-wider select-none">
+                        cat
+                    </div>
+                    <!-- Optional visual phonics dots / dashes helper -->
+                    <div id="sound-buttons-container" class="mt-4 flex justify-center items-center space-x-2 min-h-[16px]">
+                        <!-- Rendered sound dots dynamically -->
+                    </div>
+                </div>
+
+                <!-- Word hint / note bottom -->
+                <div class="w-full text-center">
+                    <span id="word-stage-info" class="text-xs font-semibold opacity-75">Stage 1.1 • Initial Sounds</span>
+                </div>
+            </div>
+
+            <!-- PARENT ACTION CONTROLS -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider">Parent Assessment Control</p>
+                
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                    <button onclick="recordAnswer(false)" class="py-4 px-4 bg-rose-100 hover:bg-rose-200 border-2 border-rose-300 text-rose-950 font-heading font-bold text-base sm:text-lg rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center space-x-2">
+                        <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <span>Incorrect / Struggled</span>
+                    </button>
+
+                    <button onclick="recordAnswer(true)" class="py-4 px-4 bg-emerald-500 hover:bg-emerald-600 border-2 border-emerald-600 text-white font-heading font-bold text-base sm:text-lg rounded-xl transition shadow-md active:scale-95 flex items-center justify-center space-x-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                        <span>Correct & Fluent</span>
+                    </button>
+                </div>
+                <p class="text-center text-xs text-slate-400">Tip: Desktop shortcuts: <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700">← Left Arrow</kbd> (Incorrect), <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700">Right Arrow →</kbd> (Correct)</p>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: SESSION SUMMARY -->
+        <section id="summary-screen" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm text-center space-y-6">
+                <div class="inline-block p-4 bg-amber-100 text-amber-600 rounded-full mb-2">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                </div>
+
+                <div>
+                    <h2 class="text-3xl font-heading font-bold text-navy-900">Fantastic Reading!</h2>
+                    <p class="text-sm text-slate-600 mt-1">Session complete. Here is a summary of your child's fluency progress.</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="text-center">
+                        <div id="sum-accuracy" class="text-2xl sm:text-3xl font-bold text-emerald-600">100%</div>
+                        <div class="text-xs text-slate-500 font-semibold mt-0.5">Accuracy</div>
+                    </div>
+                    <div class="text-center border-x border-slate-200">
+                        <div id="sum-speed" class="text-2xl sm:text-3xl font-bold text-navy-900">1.8s</div>
+                        <div class="text-xs text-slate-500 font-semibold mt-0.5">Avg Time / Word</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="sum-count" class="text-2xl sm:text-3xl font-bold text-blue-600">10/10</div>
+                        <div class="text-xs text-slate-500 font-semibold mt-0.5">Correct</div>
+                    </div>
+                </div>
+
+                <!-- Word Breakdown List -->
+                <div class="text-left space-y-3">
+                    <h3 class="text-sm font-bold text-navy-900 uppercase tracking-wider">Session Results Breakdown</h3>
+                    <div id="summary-word-list" class="max-h-60 overflow-y-auto divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+                        <!-- Summary list rows injected JS -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button onclick="startSession()" class="flex-1 py-3 px-4 bg-navy-900 hover:bg-navy-800 text-white font-heading font-bold rounded-xl shadow transition">
+                        Practice Same Stage Again
+                    </button>
+                    <button onclick="showScreen('setup-screen')" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-navy-900 font-heading font-bold rounded-xl border border-slate-300 transition">
+                        Change Settings
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: PARENT ANALYTICS & WORD BANK -->
+        <section id="analytics-screen" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-blue-100 text-blue-900 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Local Analytics</span>
+                        <h2 class="text-2xl font-heading font-bold text-navy-900 mt-2">Word Performance History</h2>
+                        <p class="text-xs text-slate-500 mt-1">Track response times and trouble words saved locally on this device.</p>
+                    </div>
+                    <button onclick="resetAllStats()" class="text-xs text-rose-600 hover:bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg font-semibold self-start sm:self-auto">
+                        Reset Local History
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="analytics-search" oninput="renderAnalyticsTable()" placeholder="Search word..." class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-800">
+                    <select id="analytics-filter-stage" onchange="renderAnalyticsTable()" class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-800">
+                        <option value="ALL">All Stages</option>
+                        <option value="1.1">Set 1.1</option>
+                        <option value="1.2">Set 1.2</option>
+                        <option value="1.3">Set 1.3</option>
+                        <option value="1.4">Set 1.4</option>
+                        <option value="1.5">Set 1.5</option>
+                        <option value="1.6">Set 1.6</option>
+                        <option value="1.7">Set 1.7</option>
+                        <option value="2">Set 2 Vowels</option>
+                        <option value="3">Set 3 Vowels</option>
+                    </select>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <th class="p-3">Word</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Stage</th>
+                                <th class="p-3">Attempts</th>
+                                <th class="p-3">Accuracy</th>
+                                <th class="p-3">Avg Time</th>
+                                <th class="p-3">Priority Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analytics-table-body" class="divide-y divide-slate-100 font-medium text-slate-800">
+                            <!-- Injected JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="showScreen('setup-screen')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-navy-900 font-bold text-xs rounded-lg border border-slate-300">
+                        ← Back to Setup
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
+        <p>Designed for Year 1 Reading Fluency • Read Write Inc. Aligned Phonics Practice</p>
+    </footer>
+
+    <script>
+        /* ===================================================================
+           PWA SERVICE WORKER REGISTRATION (ENABLES STANDALONE APP INSTALL)
+           =================================================================== */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    self.addEventListener('install', (e) => self.skipWaiting());
+                    self.addEventListener('activate', (e) => self.clients.claim());
+                    self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
+                `;
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+            });
+        }
+
+        /* ===================================================================
+           READ WRITE INC. MASTER WORD BANK (SET 1.1 - SET 3)
+           =================================================================== */
+        const RWI_STAGES = [
+            { id: "1.1", name: "Set 1.1 (m, a, s, d, t)" },
+            { id: "1.2", name: "Set 1.2 (i, n, p, g, o)" },
+            { id: "1.3", name: "Set 1.3 (c, k, u, b)" },
+            { id: "1.4", name: "Set 1.4 (f, e, l, h, r)" },
+            { id: "1.5", name: "Set 1.5 (j, v, w, z, x)" },
+            { id: "1.6", name: "Set 1.6 (sh, th, ch, qu, ng, nk)" },
+            { id: "1.7", name: "Set 1.7 (Blends & 4/5 Letters)" },
+            { id: "2",   name: "Set 2 (Speed Sounds Vowels)" },
+            { id: "3",   name: "Set 3 (Complex Vowels)" }
+        ];
+
+        const MASTER_WORDS = [
+            // --- SET 1.1 ---
+            { word: "mat", type: "green", stage: "1.1", dots: [1, 1, 1] },
+            { word: "sat", type: "green", stage: "1.1", dots: [1, 1, 1] },
+            { word: "mad", type: "green", stage: "1.1", dots: [1, 1, 1] },
+            { word: "sad", type: "green", stage: "1.1", dots: [1, 1, 1] },
+            { word: "dad", type: "green", stage: "1.1", dots: [1, 1, 1] },
+            { word: "at",  type: "green", stage: "1.1", dots: [1, 1] },
+            { word: "I",   type: "red",   stage: "1.1", dots: [1] },
+            { word: "the", type: "red",   stage: "1.1", dots: [1] },
+            { word: "smat",type: "alien", stage: "1.1", dots: [1, 1, 1, 1] },
+            { word: "dap", type: "alien", stage: "1.1", dots: [1, 1, 1] },
+
+            // --- SET 1.2 ---
+            { word: "pin", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "got", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "dog", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "pop", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "sit", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "tip", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "pan", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "top", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "dig", type: "green", stage: "1.2", dots: [1, 1, 1] },
+            { word: "my",  type: "red",   stage: "1.2", dots: [1] },
+            { word: "you", type: "red",   stage: "1.2", dots: [1] },
+            { word: "gip", type: "alien", stage: "1.2", dots: [1, 1, 1] },
+            { word: "nog", type: "alien", stage: "1.2", dots: [1, 1, 1] },
+
+            // --- SET 1.3 ---
+            { word: "cat", type: "green", stage: "1.3", dots: [1, 1, 1] },
+            { word: "kit", type: "green", stage: "1.3", dots: [1, 1, 1] },
+            { word: "mud", type: "green", stage: "1.3", dots: [1, 1, 1] },
+            { word: "up",  type: "green", stage: "1.3", dots: [1, 1] },
+            { word: "cup", type: "green", stage: "1.3", dots: [1, 1, 1] },
+            { word: "bad", type: "green", stage: "1.3", dots: [1, 1, 1] },
+            { word: "bin", type: "green", stage: "1.3", dots: [1, 1, 1] },
+            { word: "bus", type: "green", stage: "1.3", dots: [1, 1, 1] },
+            { word: "said",type: "red",   stage: "1.3", dots: [1] },
+            { word: "your",type: "red",   stage: "1.3", dots: [1] },
+            { word: "kud", type: "alien", stage: "1.3", dots: [1, 1, 1] },
+            { word: "fub", type: "alien", stage: "1.3", dots: [1, 1, 1] },
+
+            // --- SET 1.4 ---
+            { word: "fan", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "fat", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "log", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "lip", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "hen", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "hit", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "red", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "run", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "rat", type: "green", stage: "1.4", dots: [1, 1, 1] },
+            { word: "are", type: "red",   stage: "1.4", dots: [1] },
+            { word: "be",  type: "red",   stage: "1.4", dots: [1] },
+            { word: "hep", type: "alien", stage: "1.4", dots: [1, 1, 1] },
+            { word: "rif", type: "alien", stage: "1.4", dots: [1, 1, 1] },
+
+            // --- SET 1.5 ---
+            { word: "jog", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "jam", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "vet", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "van", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "win", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "wet", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "zip", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "fox", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "box", type: "green", stage: "1.5", dots: [1, 1, 1] },
+            { word: "of",  type: "red",   stage: "1.5", dots: [1] },
+            { word: "no",  type: "red",   stage: "1.5", dots: [1] },
+            { word: "go",  type: "red",   stage: "1.5", dots: [1] },
+            { word: "zob", type: "alien", stage: "1.5", dots: [1, 1, 1] },
+            { word: "vax", type: "alien", stage: "1.5", dots: [1, 1, 1] },
+
+            // --- SET 1.6 (Digraphs) ---
+            { word: "ship",type: "green", stage: "1.6", dots: [2, 1, 1] },
+            { word: "shop",type: "green", stage: "1.6", dots: [2, 1, 1] },
+            { word: "fish",type: "green", stage: "1.6", dots: [1, 1, 2] },
+            { word: "thin",type: "green", stage: "1.6", dots: [2, 1, 1] },
+            { word: "thick",type: "green", stage: "1.6", dots: [2, 1, 2] },
+            { word: "chat",type: "green", stage: "1.6", dots: [2, 1, 1] },
+            { word: "chin",type: "green", stage: "1.6", dots: [2, 1, 1] },
+            { word: "quiz",type: "green", stage: "1.6", dots: [2, 1, 1] },
+            { word: "sing",type: "green", stage: "1.6", dots: [1, 1, 2] },
+            { word: "wink",type: "green", stage: "1.6", dots: [1, 1, 2] },
+            { word: "to",  type: "red",   stage: "1.6", dots: [1] },
+            { word: "me",  type: "red",   stage: "1.6", dots: [1] },
+            { word: "he",  type: "red",   stage: "1.6", dots: [1] },
+            { word: "shog",type: "alien", stage: "1.6", dots: [2, 1, 1] },
+            { word: "chub",type: "alien", stage: "1.6", dots: [2, 1, 1] },
+            { word: "thip",type: "alien", stage: "1.6", dots: [2, 1, 1] },
+
+            // --- SET 1.7 (Blends) ---
+            { word: "spot",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "stop",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "frog",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "trip",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "skip",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "glad",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "jump",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "hand",type: "green", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "she", type: "red",   stage: "1.7", dots: [1] },
+            { word: "we",  type: "red",   stage: "1.7", dots: [1] },
+            { word: "so",  type: "red",   stage: "1.7", dots: [1] },
+            { word: "spug",type: "alien", stage: "1.7", dots: [1, 1, 1, 1] },
+            { word: "trof",type: "alien", stage: "1.7", dots: [1, 1, 1, 1] },
+
+            // --- SET 2 VOWELS ---
+            { word: "play",type: "green", stage: "2",   dots: [1, 1, 2] },
+            { word: "day", type: "green", stage: "2",   dots: [1, 2] },
+            { word: "may", type: "green", stage: "2",   dots: [1, 2] },
+            { word: "see", type: "green", stage: "2",   dots: [1, 2] },
+            { word: "green",type: "green", stage: "2",  dots: [1, 1, 2, 1] },
+            { word: "high",type: "green", stage: "2",   dots: [1, 3] },
+            { word: "night",type: "green", stage: "2",  dots: [1, 3, 1] },
+            { word: "blow",type: "green", stage: "2",   dots: [1, 1, 2] },
+            { word: "zoo", type: "green", stage: "2",   dots: [1, 2] },
+            { word: "look",type: "green", stage: "2",   dots: [1, 2, 1] },
+            { word: "car", type: "green", stage: "2",   dots: [1, 2] },
+            { word: "fork",type: "green", stage: "2",   dots: [1, 2, 1] },
+            { word: "boy", type: "green", stage: "2",   dots: [1, 2] },
+            { word: "what",type: "red",   stage: "2",   dots: [1] },
+            { word: "want",type: "red",   stage: "2",   dots: [1] },
+            { word: "all", type: "red",   stage: "2",   dots: [1] },
+            { word: "was", type: "red",   stage: "2",   dots: [1] },
+            { word: "call",type: "red",   stage: "2",   dots: [1] },
+            { word: "zigh",type: "alien", stage: "2",   dots: [1, 3] },
+            { word: "tay", type: "alien", stage: "2",   dots: [1, 2] },
+            { word: "prow",type: "alien", stage: "2",   dots: [1, 1, 2] },
+
+            // --- SET 3 VOWELS ---
+            { word: "tea", type: "green", stage: "3",   dots: [1, 2] },
+            { word: "clean",type: "green", stage: "3",  dots: [1, 1, 2, 1] },
+            { word: "spoil",type: "green", stage: "3",  dots: [1, 1, 2, 1] },
+            { word: "make",type: "green", stage: "3",   dots: [1, 2, 1] },
+            { word: "cake",type: "green", stage: "3",   dots: [1, 2, 1] },
+            { word: "smile",type: "green", stage: "3",  dots: [1, 1, 2, 1] },
+            { word: "home",type: "green", stage: "3",   dots: [1, 2, 1] },
+            { word: "huge",type: "green", stage: "3",   dots: [1, 2, 1] },
+            { word: "saw", type: "green", stage: "3",   dots: [1, 2] },
+            { word: "rain",type: "green", stage: "3",   dots: [1, 2, 1] },
+            { word: "goat",type: "green", stage: "3",   dots: [1, 2, 1] },
+            { word: "who", type: "red",   stage: "3",   dots: [1] },
+            { word: "why", type: "red",   stage: "3",   dots: [1] },
+            { word: "where",type: "red",  stage: "3",   dots: [1] },
+            { word: "brother",type: "red",stage: "3",   dots: [1] },
+            { word: "fream",type: "alien", stage: "3",  dots: [1, 1, 2, 1] },
+            { word: "spoi",type: "alien", stage: "3",   dots: [1, 1, 2] },
+            { word: "frode",type: "alien", stage: "3",  dots: [1, 1, 2, 1] }
+        ];
+
+        /* ===================================================================
+           APP STATE PERSISTENCE & LOCAL STORAGE MANAGEMENT
+           =================================================================== */
+        const STORAGE_KEY = "rwi_fluency_history_v1";
+
+        let localStats = {};
+
+        function loadStatsFromStorage() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    localStats = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.warn("Local storage access error:", e);
+            }
+        }
+
+        function saveStatsToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(localStats));
+            } catch (e) {
+                console.warn("Failed to save local stats:", e);
+            }
+        }
+
+        /* ===================================================================
+           SESSION STATE VARIABLES
+           =================================================================== */
+        let currentConfig = {
+            stage: "1.1",
+            wordType: "A",
+            count: 10,
+            adaptive: true
+        };
+
+        let sessionWords = [];
+        let currentIndex = 0;
+        let wordStartTime = 0;
+        let timerInterval = null;
+        let currentElapsed = 0;
+        let sessionResults = [];
+
+        /* ===================================================================
+           INITIALISATION ON PAGE LOAD
+           =================================================================== */
+        window.onload = function() {
+            loadStatsFromStorage();
+            renderStageButtons();
+            selectWordType('A');
+            setWordCount(10);
+
+            document.addEventListener('keydown', (e) => {
+                const practiceScreen = document.getElementById('practice-screen');
+                if (!practiceScreen.classList.contains('hidden')) {
+                    if (e.key === 'ArrowLeft') {
+                        recordAnswer(false);
+                    } else if (e.key === 'ArrowRight') {
+                        recordAnswer(true);
+                    } else if (e.key === ' ') {
+                        e.preventDefault();
+                        speakCurrentWord();
+                    }
+                }
+            });
+        };
+
+        function showScreen(screenId) {
+            ['setup-screen', 'practice-screen', 'summary-screen', 'analytics-screen'].forEach(id => {
+                const el = document.getElementById(id);
+                if (id === screenId) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+
+            if (screenId === 'analytics-screen') {
+                renderAnalyticsTable();
+            }
+        }
+
+        function renderStageButtons() {
+            const container = document.getElementById('stage-selector');
+            container.innerHTML = '';
+            RWI_STAGES.forEach(stg => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => selectStage(stg.id);
+                btn.setAttribute('data-stage', stg.id);
+                btn.className = `stage-btn p-3 rounded-xl border-2 text-left font-bold text-xs sm:text-sm transition ${currentConfig.stage === stg.id ? 'border-navy-900 bg-navy-900 text-white shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'}`;
+                btn.innerHTML = `<div>Set ${stg.id}</div><div class="text-[10px] font-normal opacity-80">${stg.name.split('(')[1] ? stg.name.split('(')[1].replace(')', '') : ''}</div>`;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectStage(stageId) {
+            currentConfig.stage = stageId;
+            document.querySelectorAll('.stage-btn').forEach(btn => {
+                if (btn.getAttribute('data-stage') === stageId) {
+                    btn.className = 'stage-btn p-3 rounded-xl border-2 text-left font-bold text-xs sm:text-sm transition border-navy-900 bg-navy-900 text-white shadow-sm';
+                } else {
+                    btn.className = 'stage-btn p-3 rounded-xl border-2 text-left font-bold text-xs sm:text-sm transition border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300';
+                }
+            });
+        }
+
+        function selectWordType(typeCode) {
+            currentConfig.wordType = typeCode;
+            document.querySelectorAll('.word-type-btn').forEach(btn => {
+                const t = btn.getAttribute('data-type');
+                if (t === typeCode) {
+                    btn.classList.add('ring-2', 'ring-navy-900', 'shadow-sm');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-navy-900', 'shadow-sm');
+                }
+            });
+        }
+
+        function setWordCount(num) {
+            currentConfig.count = num;
+            document.getElementById('word-count-display').innerText = `${num} words`;
+            document.querySelectorAll('.count-btn').forEach(btn => {
+                if (parseInt(btn.innerText) === num) {
+                    btn.className = 'count-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 bg-navy-900 text-white';
+                } else {
+                    btn.className = 'count-btn px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-700';
+                }
+            });
+        }
+
+        function getWordWeight(wordObj) {
+            const stats = localStats[wordObj.word];
+            if (!stats) return 1.0;
+
+            const errorCount = stats.totalAttempts - stats.correctCount;
+            const avgTime = stats.totalAttempts > 0 ? (stats.totalTimeSec / stats.totalAttempts) : 0;
+            
+            let weight = 1.0;
+            weight += (errorCount * 2.5);
+            if (avgTime > 1.5) {
+                weight += ((avgTime - 1.5) * 1.2);
+            }
+
+            return Math.max(0.5, weight);
+        }
+
+        function filterWordsForSession() {
+            const stage = currentConfig.stage;
+            const typeMode = currentConfig.wordType;
+
+            let pool = MASTER_WORDS.filter(w => w.stage === stage);
+
+            if (pool.length < 5) {
+                pool = MASTER_WORDS.filter(w => parseFloat(w.stage) <= parseFloat(stage));
+            }
+
+            if (typeMode === 'A') {
+                pool = pool.filter(w => w.type === 'green');
+            } else if (typeMode === 'B') {
+                pool = pool.filter(w => w.type === 'red');
+            } else if (typeMode === 'C') {
+                pool = pool.filter(w => w.type === 'alien');
+            } else if (typeMode === 'D') {
+                pool = pool.filter(w => w.type === 'green' || w.type === 'red');
+            } else if (typeMode === 'E') {
+                // All types
+            }
+
+            if (pool.length === 0) {
+                pool = MASTER_WORDS.filter(w => w.stage === stage);
+            }
+
+            currentConfig.adaptive = document.getElementById('adaptive-toggle').checked;
+            
+            let chosen = [];
+            let availablePool = [...pool];
+
+            while (chosen.length < currentConfig.count && availablePool.length > 0) {
+                if (currentConfig.adaptive) {
+                    const weights = availablePool.map(w => getWordWeight(w));
+                    const totalWeight = weights.reduce((a, b) => a + b, 0);
+                    let rand = Math.random() * totalWeight;
+
+                    let selectedIdx = 0;
+                    for (let i = 0; i < weights.length; i++) {
+                        rand -= weights[i];
+                        if (rand <= 0) {
+                            selectedIdx = i;
+                            break;
+                        }
+                    }
+
+                    chosen.push(availablePool[selectedIdx]);
+                    availablePool.splice(selectedIdx, 1);
+                } else {
+                    const randIdx = Math.floor(Math.random() * availablePool.length);
+                    chosen.push(availablePool[randIdx]);
+                    availablePool.splice(randIdx, 1);
+                }
+
+                if (availablePool.length === 0 && chosen.length < currentConfig.count) {
+                    availablePool = [...pool];
+                }
+            }
+
+            return chosen;
+        }
+
+        function startSession() {
+            sessionWords = filterWordsForSession();
+            currentIndex = 0;
+            sessionResults = [];
+
+            showScreen('practice-screen');
+            loadCurrentWord();
+        }
+
+        function loadCurrentWord() {
+            if (currentIndex >= sessionWords.length) {
+                finishSession();
+                return;
+            }
+
+            const wordObj = sessionWords[currentIndex];
+
+            const progressPct = ((currentIndex) / sessionWords.length) * 100;
+            document.getElementById('session-progress-bar').style.width = `${progressPct}%`;
+            document.getElementById('session-progress-text').innerText = `Word ${currentIndex + 1} of ${sessionWords.length}`;
+
+            const cardEl = document.getElementById('word-card');
+            const typeBadge = document.getElementById('card-type-badge');
+            const wordTextEl = document.getElementById('current-word-text');
+            const stageInfo = document.getElementById('word-stage-info');
+
+            wordTextEl.innerText = wordObj.word;
+            stageInfo.innerText = `Set ${wordObj.stage} • ${wordObj.type.toUpperCase()} WORD`;
+
+            cardEl.className = "border-4 rounded-3xl p-8 sm:p-14 text-center transition-all duration-300 relative shadow-md min-h-[280px] sm:min-h-[340px] flex flex-col justify-between items-center ";
+
+            if (wordObj.type === 'green') {
+                cardEl.classList.add('bg-card-green');
+                typeBadge.className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-sm";
+                typeBadge.innerText = "Green Word (Decodable)";
+            } else if (wordObj.type === 'red') {
+                cardEl.classList.add('bg-card-red');
+                typeBadge.className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-rose-100 text-rose-900 border border-rose-300 shadow-sm";
+                typeBadge.innerText = "Red Word (Tricky Sight Word)";
+            } else if (wordObj.type === 'alien') {
+                cardEl.classList.add('bg-card-blue');
+                typeBadge.className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-100 text-blue-900 border border-blue-300 shadow-sm";
+                typeBadge.innerText = "Alien Word 🛸 (Nonsense)";
+            }
+
+            renderSoundDots(wordObj);
+            startTimer();
+        }
+
+        function renderSoundDots(wordObj) {
+            const container = document.getElementById('sound-buttons-container');
+            container.innerHTML = '';
+
+            if (wordObj.type === 'red') {
+                container.innerHTML = `<span class="text-xs text-rose-700 font-bold bg-rose-100/80 px-2.5 py-0.5 rounded-full">Tricky! You can't Fred-talk a red word</span>`;
+                return;
+            }
+
+            if (wordObj.dots && wordObj.dots.length > 0) {
+                wordObj.dots.forEach(dotType => {
+                    const span = document.createElement('span');
+                    if (dotType === 1) {
+                        span.className = 'sound-dot shadow-sm';
+                    } else if (dotType >= 2) {
+                        span.className = 'sound-bar shadow-sm';
+                    }
+                    container.appendChild(span);
+                });
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            wordStartTime = Date.now();
+            currentElapsed = 0;
+            document.getElementById('live-timer-text').innerText = '0.0s';
+
+            timerInterval = setInterval(() => {
+                currentElapsed = (Date.now() - wordStartTime) / 1000;
+                document.getElementById('live-timer-text').innerText = currentElapsed.toFixed(1) + 's';
+            }, 100);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            return (Date.now() - wordStartTime) / 1000;
+        }
+
+        function recordAnswer(isCorrect) {
+            const timeTaken = stopTimer();
+            const currentWord = sessionWords[currentIndex];
+
+            sessionResults.push({
+                wordObj: currentWord,
+                isCorrect: isCorrect,
+                timeTakenSec: parseFloat(timeTaken.toFixed(1))
+            });
+
+            const wordKey = currentWord.word;
+            if (!localStats[wordKey]) {
+                localStats[wordKey] = {
+                    totalAttempts: 0,
+                    correctCount: 0,
+                    totalTimeSec: 0,
+                    lastTimeSec: 0,
+                    stage: currentWord.stage,
+                    type: currentWord.type
+                };
+            }
+
+            localStats[wordKey].totalAttempts += 1;
+            if (isCorrect) localStats[wordKey].correctCount += 1;
+            localStats[wordKey].totalTimeSec += timeTaken;
+            localStats[wordKey].lastTimeSec = timeTaken;
+
+            saveStatsToStorage();
+
+            currentIndex++;
+            loadCurrentWord();
+        }
+
+        function quitSession() {
+            clearInterval(timerInterval);
+            showScreen('setup-screen');
+        }
+
+        function finishSession() {
+            clearInterval(timerInterval);
+            showScreen('summary-screen');
+
+            try {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } catch (e) {}
+
+            const total = sessionResults.length;
+            const correctCount = sessionResults.filter(r => r.isCorrect).length;
+            const accuracyPct = Math.round((correctCount / total) * 100);
+            const totalTime = sessionResults.reduce((acc, curr) => acc + curr.timeTakenSec, 0);
+            const avgTime = total > 0 ? (totalTime / total).toFixed(1) : '0.0';
+
+            document.getElementById('sum-accuracy').innerText = `${accuracyPct}%`;
+            document.getElementById('sum-speed').innerText = `${avgTime}s`;
+            document.getElementById('sum-count').innerText = `${correctCount}/${total}`;
+
+            const listContainer = document.getElementById('summary-word-list');
+            listContainer.innerHTML = '';
+
+            sessionResults.forEach(res => {
+                const row = document.createElement('div');
+                row.className = 'p-3 flex items-center justify-between text-xs sm:text-sm font-medium';
+                
+                const typeColor = res.wordObj.type === 'green' ? 'bg-emerald-100 text-emerald-800' : (res.wordObj.type === 'red' ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800');
+
+                row.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white ${res.isCorrect ? 'bg-emerald-500' : 'bg-rose-500'}">
+                            ${res.isCorrect ? '✓' : '✗'}
+                        </span>
+                        <span class="rwi-word-display text-lg font-bold text-navy-900">${res.wordObj.word}</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${typeColor}">${res.wordObj.type.toUpperCase()}</span>
+                    </div>
+                    <div class="text-right font-mono font-bold text-slate-600">
+                        ${res.timeTakenSec.toFixed(1)}s
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            });
+        }
+
+        function renderAnalyticsTable() {
+            const tbody = document.getElementById('analytics-table-body');
+            tbody.innerHTML = '';
+
+            const searchTerm = (document.getElementById('analytics-search').value || '').toLowerCase();
+            const stageFilter = document.getElementById('analytics-filter-stage').value;
+
+            let allWords = MASTER_WORDS.map(w => {
+                const st = localStats[w.word] || { totalAttempts: 0, correctCount: 0, totalTimeSec: 0, lastTimeSec: 0 };
+                const acc = st.totalAttempts > 0 ? Math.round((st.correctCount / st.totalAttempts) * 100) : 0;
+                const avgT = st.totalAttempts > 0 ? (st.totalTimeSec / st.totalAttempts).toFixed(1) : '-';
+                const pScore = getWordWeight(w).toFixed(1);
+
+                return { ...w, ...st, accuracy: acc, avgTimeFormatted: avgT, priorityScore: pScore };
+            });
+
+            allWords = allWords.filter(w => {
+                const matchesSearch = w.word.toLowerCase().includes(searchTerm);
+                const matchesStage = stageFilter === 'ALL' || w.stage === stageFilter;
+                return matchesSearch && matchesStage;
+            });
+
+            if (allWords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">No words match filter criteria.</td></tr>`;
+                return;
+            }
+
+            allWords.forEach(w => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition';
+
+                const typeBadge = w.type === 'green' ? '<span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Green</span>' : (w.type === 'red' ? '<span class="text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">Red</span>' : '<span class="text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">Alien</span>');
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-navy-900 text-base">${w.word}</td>
+                    <td class="p-3">${typeBadge}</td>
+                    <td class="p-3">Set ${w.stage}</td>
+                    <td class="p-3 font-mono">${w.totalAttempts}</td>
+                    <td class="p-3 font-bold ${w.accuracy >= 80 ? 'text-emerald-600' : (w.totalAttempts === 0 ? 'text-slate-400' : 'text-rose-600')}">${w.totalAttempts > 0 ? w.accuracy + '%' : '-'}</td>
+                    <td class="p-3 font-mono">${w.avgTimeFormatted}${w.avgTimeFormatted !== '-' ? 's' : ''}</td>
+                    <td class="p-3 font-bold text-amber-600">${w.priorityScore}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetAllStats() {
+            if (confirm("Are you sure you want to reset all reading speed and error history saved locally?")) {
+                localStats = {};
+                saveStatsToStorage();
+                renderAnalyticsTable();
+            }
+        }
+
+        function speakCurrentWord() {
+            if (currentIndex < sessionWords.length) {
+                const word = sessionWords[currentIndex].word;
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.rate = 0.8;
+                    utterance.lang = 'en-GB';
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
